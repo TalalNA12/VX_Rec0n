@@ -2,9 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Favicon in /public -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+
+    <!-- NOTE: brand_bg.png is in src/assets, so do NOT preload via a root path.
+         Vite will bundle it when imported from App.jsx. -->
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <meta name="theme-color" content="#0b0b0f" />
+    <title>VX_Rec0n</title>
   </head>
   <body>
     <div id="root"></div>

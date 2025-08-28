@@ -2,13 +2,12 @@ services:
   postgres:
     image: postgres:15
     container_name: vx_postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: vx
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: vx_recon
     ports:
       - "5432:5432"
+    environment:
+      POSTGRES_USER: vx
+      POSTGRES_PASSWORD: vxpass
+      POSTGRES_DB: vx_recon
     volumes:
       - pgdata_vx:/var/lib/postgresql/data
 volumes:

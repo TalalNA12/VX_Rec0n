@@ -1,9 +1,155 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind v4 */
+@import "tailwindcss";
 
-html, body, #root {
-  height: 100%;
-  background: #0b0b0f; /* matte dark background */
-  color: #e5e7eb;      /* light gray text */
+/* ---- Readable body + futuristic display fonts ---- */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap");
+
+/* ---------- Theme tokens ---------- */
+@theme {
+  --color-bg: #0b0b0f;
+  --color-surface: #0f1117;
+  --color-panel: #0b0d13;
+  --color-edge: #1f2430;
+
+  --color-text: #e5e7eb;
+  --color-text-soft: #c7cbd4;
+  --color-text-muted: #9ca3af;
+
+  /* neon accents */
+  --color-neon-cyan: #22d3ee;
+  --color-neon-fuchsia: #e879f9;
+  --color-neon-emerald: #34d399;
+
+  /* font tokens */
+  --font-body: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+               "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+               "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-display: "Orbitron", "Inter", system-ui, -apple-system, Segoe UI, Roboto;
+}
+
+/* ---------- Base layout ---------- */
+@layer base {
+  html, body, #root {
+    @apply min-h-screen bg-bg text-text;
+    font-family: var(--font-body);
+  }
+  /* helpers so React can mix fonts */
+  .font-body    { font-family: var(--font-body); }
+  .font-display { font-family: var(--font-display); letter-spacing: .02em; }
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 0.2rem var(--color-neon-cyan)); }
+  50%      { filter: drop-shadow(0 0 0.55rem var(--color-neon-cyan)); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes floatSlight {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
+}
+
+/* ---------- Utilities (neon, glass, progress, toggle) ---------- */
+@layer utilities {
+  /* subtle glass card */
+  .glass {
+    background-color: color-mix(in oklab, var(--color-panel) 75%, transparent);
+    backdrop-filter: blur(8px);
+    border: 1px solid color-mix(in oklab, var(--color-edge) 85%, transparent);
+  }
+
+  /* neon headline text (use with .font-display) */
+  .neon-title {
+    @apply font-display;
+    background: linear-gradient(90deg, var(--color-neon-cyan), var(--color-neon-fuchsia));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow:
+      0 0 6px color-mix(in oklab, var(--color-neon-cyan) 45%, transparent),
+      0 0 18px color-mix(in oklab, var(--color-neon-fuchsia) 35%, transparent);
+  }
+
+  /* neon headline (legacy name kept for anything already using it) */
+  .neon-text {
+    text-shadow:
+      0 0 6px color-mix(in oklab, var(--color-neon-cyan) 55%, transparent),
+      0 0 18px color-mix(in oklab, var(--color-neon-fuchsia) 45%, transparent);
+  }
+
+  .btn-neon {
+    box-shadow:
+      0 0 0.2rem rgba(34, 211, 238, 0.4),
+      0 0 0.6rem rgba(232, 121, 249, 0.25);
+    transition: box-shadow 160ms ease, transform 160ms ease;
+  }
+  .btn-neon:hover {
+    box-shadow:
+      0 0 0.35rem rgba(34, 211, 238, 0.6),
+      0 0 1rem rgba(232, 121, 249, 0.4);
+    transform: translateY(-1px);
+  }
+  .btn-neon:active { transform: translateY(0); }
+
+  .ring-neon {
+    outline: none;
+    box-shadow:
+      0 0 0 2px color-mix(in oklab, var(--color-neon-cyan) 60%, transparent),
+      0 0 0 6px rgba(34, 211, 238, 0.18);
+  }
+
+  .progress-shimmer { position: relative; overflow: hidden; }
+  .progress-shimmer::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(34, 211, 238, 0.08) 20%,
+      rgba(232, 121, 249, 0.12) 50%,
+      rgba(34, 211, 238, 0.08) 80%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.2s linear infinite;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  .progress-glow {
+    box-shadow:
+      0 0 0.35rem rgba(34, 211, 238, 0.55),
+      0 0 1.2rem rgba(232, 121, 249, 0.35);
+    animation: glowPulse 2.4s ease-in-out infinite;
+  }
+
+  .progress-stripes {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.06) 0,
+      rgba(255,255,255,0.06) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    background-size: 40px 40px;
+    animation: shimmer 1s linear infinite;
+    opacity: 0.5;
+  }
+
+  .neon-ring {
+    box-shadow:
+      0 0 6px rgba(34,211,238,0.4),
+      inset 0 0 18px rgba(232,121,249,0.25);
+  }
+
+  .floaty { animation: floatSlight 4.5s ease-in-out infinite; }
+
+  /* ==== Pretty toggle (Lab only) ==== */
+  .toggle-track { @apply w-12 h-7 rounded-full border border-[#2b2f3a] bg-[#0b0d13] transition-colors duration-300; }
+  .toggle-track--on { background-color: color-mix(in oklab, var(--color-neon-cyan) 20%, transparent); }
+  .toggle-knob  { @apply absolute left-1 top-1 w-5 h-5 rounded-full bg-gray-300 transition-transform duration-300; }
+  .toggle-knob--on { transform: translateX(20px); background: var(--color-neon-cyan); }
 }
